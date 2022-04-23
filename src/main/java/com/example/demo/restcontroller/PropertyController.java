@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,10 +34,11 @@ public class PropertyController {
 	}
 	 
 	@GetMapping("/Properties")
-	public ResponseEntity<List<Property>> getAllProperties(@RequestParam(required = false) boolean bestseller)
+	@CrossOrigin
+	public ResponseEntity<List<Property>> getAllProperties(@RequestParam(required = false) boolean bestSeller)
 	{
 		List<Property> p;
-		if(bestseller)
+		if(bestSeller)
 			p = propertyService.getPropertyByBestSeller();
 		else
 			p = propertyService.getAllProperties();
@@ -47,6 +49,7 @@ public class PropertyController {
 	}
 	
 	@GetMapping("/Properties/{propertyId}")
+	@CrossOrigin
 	public ResponseEntity<Property> getProperty(@PathVariable String propertyId)
 	{
 		Property p = propertyService.getProperty(propertyId);
@@ -61,8 +64,21 @@ public class PropertyController {
 		}
 	}
 	
+	@GetMapping("/Properties/Search/{propertyType}")
+	@CrossOrigin
+	public ResponseEntity<List<Property>> getPropertyOnType(@PathVariable String propertyType)
+	{
+		List<Property> p;
+		p = propertyService.getPropertyByType(propertyType);
+		if (p !=null) 
+		{
+			return new ResponseEntity<List<Property>>(p, HttpStatus.OK);
+		} 
+		return new ResponseEntity<List<Property>>(new ArrayList<Property>(), HttpStatus.NOT_FOUND);
+	}
 	
 	@GetMapping("/Properties/Search")
+	@CrossOrigin
 	public ResponseEntity<List<Property>> getPropertyOnSearch(@RequestParam(required = false) String type, @RequestParam(required = false) String title)
 	{
 		List<Property> p;
